@@ -6,9 +6,6 @@
 (require 'gnutls)
 (add-to-list 'gnutls-trustfiles
              "/usr/local/etc/openssl/cert.pem")
-(add-to-list 'gnutls-trustfiles
-             (expand-file-name
-              "~/.emacs.d/comodo.rsa.ca.intermediate.crt"))
 
 (add-to-list 'load-path
              "/usr/local/share/emacs/site-lisp/mu/mu4e")
