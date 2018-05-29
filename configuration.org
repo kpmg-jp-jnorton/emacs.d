@@ -1060,7 +1060,7 @@ Allow ‘a.’, ‘A.’, ‘a)’ and ‘A) as list elements:
   (org-babel-do-load-languages
    'org-babel-load-languages
    '(
-     (sh . t)
+     (shell . t)
      (js . t)
      (ruby . t)
      ))
@@ -1974,13 +1974,13 @@ Before I used =smex= which is M-x combined with ido. Counsel makes this even nic
 #+END_SRC
 
 *** Disable Ivy where it is broken
-    
+
 Ivy cannot search in PDFs. It tries to search in the PDF source code.
 Therefore I fall back to using isearch within PDFs.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'pdf-view-mode-hook '(lambda()
-                                   (define-key pdf-view-mode-map "\C-s" 'isearch-forward))) 
+                                   (define-key pdf-view-mode-map "\C-s" 'isearch-forward)))
 #+END_SRC
 
 *** Improve other packages with ivy
@@ -1996,11 +1996,11 @@ Therefore I fall back to using isearch within PDFs.
 #+BEGIN_SRC emacs-lisp
   (setq mu4e-completing-read-function 'ivy-completing-read)
 #+END_SRC
-  
+
   Synosaurus completion (Default is =ido=)
 
 #+BEGIN_SRC emacs-lisp
-  (setq synosaurus-choose-method 'ivy-read) 
+  (setq synosaurus-choose-method 'ivy-read)
 #+END_SRC
 
 ** Notes on =Ivy= vs =ido=
@@ -2048,10 +2048,10 @@ https://github.com/hpdeifel/synosaurus/
 
 Synosaurus is a thesaurus front-end with pluggable back-end.
 
-Use the [[http://openthesaurus.de/][openthesaurus.de]] back-end. 
+Use the [[http://openthesaurus.de/][openthesaurus.de]] back-end.
 
 #+BEGIN_SRC emacs-lisp
-  (setq synosaurus-backend 'synosaurus-backend-openthesaurus)  
+  (setq synosaurus-backend 'synosaurus-backend-openthesaurus)
 #+END_SRC
 
 ** Flyspell
@@ -2286,7 +2286,7 @@ Parinfer algorithm is quite nice. I'll try again at some point.
   (standard-mode)
 #+END_SRC
 * Org Mode Time Export Table
-  
+
 Create a customized time table ready for CSV export.
 
 Usage:
@@ -2361,5 +2361,5 @@ When evaluating the src-block above, it'll yield a table like:
      ;; works).
      (ok-filter-table-by-date (ok-generate-clock-table) from-date 0)
      '(hline)
-     '(("" "total:" ":=vsum(@2..@-1);T"))))  
+     '(("" "total:" ":=vsum(@2..@-1);T"))))
 #+END_SRC
