@@ -43,7 +43,8 @@ down in this file, some are used with the default configuration.
 
 #+BEGIN_SRC emacs-lisp
 
-  (defvar my-packages '(ag
+  (defvar my-packages '(use-package
+                        ag
                         atomic-chrome
                         beacon
                         browse-kill-ring
@@ -568,6 +569,15 @@ line break.
                                   (when (not (or (derived-mode-p 'markdown-mode)
                                                  (derived-mode-p 'org-mode))
                                     (delete-trailing-whitespace)))))
+
+(use-package whitespace
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-mode))
+  (add-hook 'before-save-hook #'whitespace-cleanup)
+  :config
+  (setq whitespace-line-column 80) ;; limit line length
+  (setq whitespace-style '(face tabs empty trailing lines-tail)))
 #+END_SRC
 
 *** Code Folding
@@ -2126,6 +2136,35 @@ Debian package.
   (set-frame-font "Menlo 14")
   ; Use Spotlight to search with M-x locate
   (setq locate-command "mdfind"))
+
+(defun whack-whitespace-forward ()
+  "Delete all white space from point to the next word."
+  (interactive nil)
+  (re-search-forward "[ \t\n]+" nil t)
+  (replace-match "" nil nil))
+
+(defun un-indent-by-removing-4-spaces ()
+  "remove 4 spaces from beginning of a line"
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (beginning-of-line)
+      ;; get rid of tabs at beginning of line
+      (when (looking-at "^\\s-+")
+        (untabify (match-beginning 0) (match-end 0)))
+      (when (looking-at "^    ")
+        (replace-match "")))))
+
+(global-set-key (kbd "C-M-+") 'default-text-scale-increase)
+(global-set-key (kbd "C-M--") 'default-text-scale-decrease)
+(global-set-key (kbd "M-[") 'whack-whitespace-forward)
+(global-set-key (kbd "<backtab>") 'un-indent-by-removing-4-spaces)
+
+(when (eq system-type 'darwin) ;; mac specific settings
+  (setq mac-option-modifier 'alt)
+  (setq mac-command-modifier 'meta)
+  (global-set-key [kp-delete] 'delete-char)) ;; sets fn-delete to be right-delete
+
 #+END_SRC
 
 * Bad experience
@@ -2175,6 +2214,28 @@ Parinfer algorithm is quite nice. I'll try again at some point.
   ;;      (define-key parinfer-mode-map (kbd "C-,") 'parinfer-toggle-mode)
   ;;      (define-key parinfer-region-mode-map (kbd ">") 'parinfer-shift-right)
   ;;      (define-key parinfer-region-mode-map (kbd "<") 'parinfer-shift-left)))
+
+;; https://github.com/DogLooksGood/parinfer-mode
+(use-package parinfer
+  :ensure t
+  :bind
+  (("C-," . parinfer-toggle-mode))
+  :init
+  (progn
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+             pretty-parens  ; different paren styles for different modes.
+             evil           ; If you use Evil.
+             ;;lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+             paredit        ; Introduce some paredit commands.
+             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+             smart-yank))   ; Yank behavior depend on mode.
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
+
 #+END_SRC
 
 * Presentation / Beamer
